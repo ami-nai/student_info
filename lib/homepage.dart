@@ -4,10 +4,13 @@ import 'package:student_info/view_students.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
-  //final const sz = MediaQuery.sizeof(context).height;
+  
 
   @override
   Widget build(BuildContext context) {
+
+    var size = MediaQuery.of(context).size;
+    
     return Scaffold(
       body: 
         Center(
@@ -21,7 +24,7 @@ class Homepage extends StatelessWidget {
                 ),
               ),
               
-              SizedBox(height: 100),
+              SizedBox(height: size.height * 0.15),
               ElevatedButton(onPressed: (){
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddStudent()));
               },
@@ -31,7 +34,7 @@ class Homepage extends StatelessWidget {
               ),
               ),
 
-              SizedBox(height: 20),
+              SizedBox(height: size.height * 0.02),
               ElevatedButton(onPressed: (){
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ViewStudents()));
               },
