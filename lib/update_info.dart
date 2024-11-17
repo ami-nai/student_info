@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:student_info/database/db_helper.dart';
 import 'package:student_info/model/s_info.dart';
 import 'package:student_info/view_students.dart';
 
-
-
-
-class AddStudent extends StatefulWidget {
-  const AddStudent({super.key});
+class UpdateInfo extends StatefulWidget {
+  final sinfo;
+  const UpdateInfo({super.key, required this.sinfo});
 
   @override
-  State<AddStudent> createState() => _AddStudentState();
+  State<UpdateInfo> createState() => _UpdateInfoState();
 }
 
-class _AddStudentState extends State<AddStudent> {
-
+class _UpdateInfoState extends State<UpdateInfo> {
 
   late DbHelper dbHelper;
 
@@ -28,10 +24,12 @@ class _AddStudentState extends State<AddStudent> {
 
   final GlobalKey<FormState> infoFormKey = GlobalKey();
 
-  //add info to database
-  Future addInfo() async
+  int? id;
+
+  //add notes to database
+  Future  UpdateInfo(int id) async
   {
-    final newInfo = SInfo(
+    final updateInfo = SInfo(
       sid: s_id_controller.text,
       sname: s_name_controller.text,
       sphone: s_phone_controller.text,
@@ -39,35 +37,40 @@ class _AddStudentState extends State<AddStudent> {
       slocation: s_location_controller.text,
     );
 
-    //if data insert successfully, its return row number which is greater that 1 always
-    int check= await dbHelper.insertData(newInfo.toMap());
+    int check= await dbHelper.updateData(updateInfo.toMap(),id);
     print("Check=$check");
-
     if(check>0)
-      {
-        Get.snackbar("Success", "Info Added",snackPosition: SnackPosition.BOTTOM);
-        Get.offAll(() => ViewStudents());
-      }
+    {
+
+      Get.snackbar("Updated", "Info Updated",snackPosition: SnackPosition.BOTTOM);
+      Get.offAll(ViewStudents());
+
+    }
     else
-      {
-        Get.snackbar("Error", "Error in adding info",snackPosition: SnackPosition.BOTTOM);
-      }
+    {
+      Get.snackbar("Error", "Error in updating info",snackPosition: SnackPosition.BOTTOM);
+    }
 
 
   }
 
   @override
   void initState() {
+    //TODO: Implement initState
     super.initState();
     dbHelper = DbHelper.instance;
 
+    id = widget.sinfo.id;
+    s_id_controller.text = widget.sinfo.sid;
+    s_name_controller.text = widget.sinfo.sname;
+    s_phone_controller.text = widget.sinfo.sphone;
+    s_email_controller.text = widget.sinfo.semail;
+    s_location_controller.text = widget.sinfo.slocation;
   }
 
   @override
-
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
     return Scaffold(
       
       body: Form(
@@ -92,6 +95,13 @@ class _AddStudentState extends State<AddStudent> {
                       hintText: "Name",
                       prefixIcon: const Icon(Icons.person),
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter name";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
@@ -107,6 +117,13 @@ class _AddStudentState extends State<AddStudent> {
                       hintText: "Id",
                       prefixIcon: const Icon(Icons.perm_identity),
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter Id";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
@@ -122,6 +139,13 @@ class _AddStudentState extends State<AddStudent> {
                       hintText: "Phone",
                       prefixIcon: const Icon(Icons.phone),
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter phone number";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
@@ -137,6 +161,13 @@ class _AddStudentState extends State<AddStudent> {
                       hintText: "Email",
                       prefixIcon: const Icon(Icons.email),
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter email";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
@@ -152,6 +183,13 @@ class _AddStudentState extends State<AddStudent> {
                       hintText: "Location",
                       prefixIcon: const Icon(Icons.location_city),
                     ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter location";
+                      }
+
+                      return null;
+                    },
                   ),
                 ),
                 SizedBox(height: size.height * 0.03),
@@ -174,12 +212,12 @@ class _AddStudentState extends State<AddStudent> {
                     // );
                     if(infoFormKey.currentState!.validate()){
                       infoFormKey.currentState!.save();
-                      addInfo();
+                      UpdateInfo(id!);
                     }
                     
                   }
                 },
-                  child: Text("Submit"),
+                  child: Text("Update Info"),
                   ),
         
                 SizedBox(height: size.height * 0.1),
@@ -192,10 +230,3 @@ class _AddStudentState extends State<AddStudent> {
     
   }
 }
-
-
-
-
-
-
-
